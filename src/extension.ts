@@ -1,6 +1,5 @@
 import * as vscode from 'vscode';
 import axios from 'axios';
-
 export function activate(context: vscode.ExtensionContext) {
     console.log('Congratulations, your extension "python-packages-handler" is now active!');
 
