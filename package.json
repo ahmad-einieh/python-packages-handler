@@ -1,9 +1,10 @@
 {
   "name": "python-packages-handler",
-  "displayName": "python_packages_handler",
+  "displayName": "Python Packages Handler",
   "publisher": "Ahmad-Einieh",
-  "description": "Easily update Python package versions in requirements.txt files",
-  "version": "0.0.1",
+  "description": "Easily update and install Python package versions in requirements.txt files",
+  "version": "0.0.2",
+  "icon": "assets/icon.jpeg",
   "engines": {
     "vscode": "^1.92.0"
   },
@@ -25,6 +26,14 @@
       {
         "command": "python-packages-handler.updateAllPackages",
         "title": "Update All Python Packages"
+      },
+      {
+        "command": "python-packages-handler.updateAndInstallPackage",
+        "title": "Update and Install Python Package"
+      },
+      {
+        "command": "python-packages-handler.updateAllAndInstallPackages",
+        "title": "Update and Install All Python Packages"
       }
     ],
     "menus": {
@@ -37,6 +46,16 @@
         {
           "when": "resourceLangId == pip-requirements",
           "command": "python-packages-handler.updateAllPackages",
+          "group": "1_modification"
+        },
+        {
+          "when": "resourceLangId == pip-requirements",
+          "command": "python-packages-handler.updateAndInstallPackage",
+          "group": "1_modification"
+        },
+        {
+          "when": "resourceLangId == pip-requirements",
+          "command": "python-packages-handler.updateAllAndInstallPackages",
           "group": "1_modification"
         }
       ]
@@ -70,7 +89,6 @@
     "typescript": "^5.4.5"
   },
   "dependencies": {
-    "axios": "^1.7.7",
     "python-packages-handler": "file:"
   }
 }
