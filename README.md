@@ -1,3 +1,5 @@
+![Python Packages Handler Tutorial](./assets/icon.jpeg)
+
 # Python Packages Handler
 
 Python Packages Handler is a Visual Studio Code extension that helps you manage, update, and install Python package versions in your `requirements.txt` files.
