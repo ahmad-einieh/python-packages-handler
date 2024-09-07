@@ -1,4 +1,4 @@
-![Python Packages Handler Tutorial](./assets/icon.jpeg)
+<img src="./assets/icon.jpeg" alt="Python Packages Handler Tutorial" width="100"/>
 
 # Python Packages Handler
 
