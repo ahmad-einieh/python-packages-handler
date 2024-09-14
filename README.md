@@ -1,4 +1,7 @@
+<a href="https://marketplace.visualstudio.com/items?itemName=Ahmad-Einieh.python-packages-handler">
 <img src="./assets/icon.jpeg" alt="Python Packages Handler Tutorial" width="100"/>
+</a>
+
 
 # Python Packages Handler
 
@@ -21,6 +24,12 @@ Python Packages Handler is a Visual Studio Code extension that helps you manage,
 4. Click Install
 
 ## Usage
+
+### Video Tutorial
+
+Here's a quick demonstration of how to use the Python Packages Handler extension:
+
+![Python Packages Handler Tutorial](./assets/tutorial.gif)
 
 ### Updating a Single Package
 
@@ -46,15 +55,10 @@ Python Packages Handler is a Visual Studio Code extension that helps you manage,
 2. Right-click anywhere in the file
 3. Select "Update and Install All Python Packages" from the context menu
 
-### Video Tutorial
-
-Here's a quick demonstration of how to use the Python Packages Handler extension:
-
-![Python Packages Handler Tutorial](./assets/tutorial.gif)
 
 ## Requirements
 
-- Visual Studio Code version 1.92.0 or higher
+- Visual Studio Code version 1.60.0 or higher
 - Internet connection (to fetch latest package versions from PyPI)
 - Python and pip installed on your system (for installation features)
 
@@ -63,6 +67,11 @@ Here's a quick demonstration of how to use the Python Packages Handler extension
 This extension doesn't add any VS Code settings.
 
 ## Release Notes
+
+### 0.0.3
+- Supported older versions of VSCode
+- Improved the README file
+- Cleaned up the code
 
 ### 0.0.2
 
