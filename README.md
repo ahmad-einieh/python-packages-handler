@@ -20,8 +20,6 @@ Python Packages Handler is a Visual Studio Code extension that helps you manage,
 3. Search for "Python Packages Handler"
 4. Click Install
 
-Alternatively, you can download the .vsix file from the [releases page](link-to-your-releases-page) and install it manually.
-
 ## Usage
 
 ### Updating a Single Package
@@ -86,7 +84,7 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## License
 
-This extension is licensed under the [MIT License](LICENSE).
+This extension is licensed under the [MIT License](LICENSE.md).
 
 ## Author
 
