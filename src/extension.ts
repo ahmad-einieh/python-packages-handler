@@ -6,8 +6,20 @@ interface PyPIResponse {
     };
 }
 
+let decorationType: vscode.TextEditorDecorationType;
+
 export function activate(context: vscode.ExtensionContext) {
     console.log('Congratulations, your extension "python-packages-handler" is now active!');
+
+    // Create a decoration type for the latest version
+    decorationType = vscode.window.createTextEditorDecorationType({
+        after: {
+            margin: '0 0 0 1em',
+            contentText: 'Latest: ',
+            color: '#888888',
+            fontStyle: 'italic'
+        }
+    });
 
     let disposable = vscode.commands.registerCommand('python-packages-handler.updatePackageVersion', async () => {
         await updatePackage();
@@ -32,6 +44,72 @@ export function activate(context: vscode.ExtensionContext) {
     });
 
     context.subscriptions.push(updateAllAndInstallDisposable);
+
+    // Add event listeners for file open, content change, and active editor change
+    context.subscriptions.push(
+        vscode.workspace.onDidOpenTextDocument(async (document) => {
+            if (document.languageId === 'pip-requirements') {
+                await addLatestVersionDecorations(document);
+            }
+        }),
+        vscode.workspace.onDidChangeTextDocument(async (event) => {
+            if (event.document.languageId === 'pip-requirements') {
+                await addLatestVersionDecorations(event.document);
+            }
+        }),
+        vscode.window.onDidChangeActiveTextEditor(async (editor) => {
+            if (editor && editor.document.languageId === 'pip-requirements') {
+                await addLatestVersionDecorations(editor.document);
+            }
+        })
+    );
+}
+
+async function addLatestVersionDecorations(document: vscode.TextDocument) {
+    const editor = vscode.window.visibleTextEditors.find(editor => editor.document === document);
+    if (!editor) {
+        return;
+    }
+
+    const decorations: vscode.DecorationOptions[] = [];
+    const text = document.getText();
+    const lines = text.split('\n');
+
+    for (let i = 0; i < lines.length; i++) {
+        const line = lines[i];
+        const packageMatch = line.trim().match(/^([\w-]+)((?:[=<>!~]+.*)?)$/);
+        if (packageMatch) {
+            const packageName = packageMatch[1];
+            const latestVersion = await fetchLatestVersion(packageName);
+            if (latestVersion) {
+                const range = new vscode.Range(i, line.length, i, line.length);
+                decorations.push({
+                    range,
+                    renderOptions: {
+                        after: {
+                            contentText: `Latest: ${latestVersion}`,
+                        }
+                    }
+                });
+            }
+        }
+    }
+
+    editor.setDecorations(decorationType, decorations);
+}
+
+async function fetchLatestVersion(packageName: string): Promise<string | null> {
+    try {
+        const response = await fetch(`https://pypi.org/pypi/${packageName}/json`);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json() as PyPIResponse;
+        return data.info.version;
+    } catch (error) {
+        console.error(`Failed to fetch the latest version for ${packageName}:`, error);
+        return null;
+    }
 }
 
 async function updatePackage() {
@@ -61,12 +139,10 @@ async function updatePackage() {
     const versionSpecifier = packageMatch[2] || '==';
 
     try {
-        const response = await fetch(`https://pypi.org/pypi/${packageName}/json`);
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+        const latestVersion = await fetchLatestVersion(packageName);
+        if (!latestVersion) {
+            throw new Error('Failed to fetch latest version');
         }
-        const data = await response.json() as PyPIResponse;
-        const latestVersion = data.info.version;
 
         // Preserve the original version specifier
         const newText = versionSpecifier 
@@ -101,17 +177,16 @@ async function updateAllPackages() {
             const packageName = packageMatch[1];
             const versionSpecifier = packageMatch[2] || '==';
             try {
-                const response = await fetch(`https://pypi.org/pypi/${packageName}/json`);
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+                const latestVersion = await fetchLatestVersion(packageName);
+                if (latestVersion) {
+                    // Preserve the original version specifier
+                    const newLine = versionSpecifier 
+                        ? `${packageName}${versionSpecifier.split(/\d/)[0]}${latestVersion}`
+                        : `${packageName}==${latestVersion}`;
+                    updatedLines.push(newLine);
+                } else {
+                    updatedLines.push(line); // Keep original if update fails
                 }
-                const data = await response.json() as PyPIResponse;
-                const latestVersion = data.info.version;
-                // Preserve the original version specifier
-                const newLine = versionSpecifier 
-                    ? `${packageName}${versionSpecifier.split(/\d/)[0]}${latestVersion}`
-                    : `${packageName}==${latestVersion}`;
-                updatedLines.push(newLine);
             } catch (error) {
                 updatedLines.push(line); // Keep original if update fails
             }
@@ -154,4 +229,8 @@ async function installPackages() {
     vscode.window.showInformationMessage('Packages installed successfully.');
 }
 
-export function deactivate() {}
+export function deactivate() {
+    if (decorationType) {
+        decorationType.dispose();
+    }
+}

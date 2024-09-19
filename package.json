@@ -3,7 +3,7 @@
   "displayName": "Python Packages Handler",
   "publisher": "Ahmad-Einieh",
   "description": "Easily update and install Python package versions in requirements.txt files",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "icon": "assets/icon.jpeg",
   "engines": {
     "vscode": "^1.60.0"
@@ -15,7 +15,9 @@
   "categories": [
     "Other"
   ],
-  "activationEvents": [],
+  "activationEvents": [
+    "onLanguage:pip-requirements"
+  ],
   "main": "./dist/extension.js",
   "contributes": {
     "commands": [
