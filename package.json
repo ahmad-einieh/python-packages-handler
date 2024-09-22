@@ -3,7 +3,7 @@
   "displayName": "Python Packages Handler",
   "publisher": "Ahmad-Einieh",
   "description": "Easily update and install Python package versions in requirements.txt files",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "icon": "assets/icon.jpeg",
   "engines": {
     "vscode": "^1.60.0"

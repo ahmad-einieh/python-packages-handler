@@ -76,4 +76,4 @@ This extension is licensed under the [MIT License](LICENSE.md).
 
 ## Author
 
-Created and maintained by [Ahmad Einieh](https://github.com/ahmad-einieh)
+Created and maintained by Ahmad Einieh [GitHub](https://github.com/ahmad-einieh), [Website](https://ahmadeinieh.online/), [LinkedIn](https://www.linkedin.com/in/ahmad-einieh/).
