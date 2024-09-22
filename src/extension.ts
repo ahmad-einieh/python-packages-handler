@@ -15,7 +15,7 @@ export function activate(context: vscode.ExtensionContext) {
     decorationType = vscode.window.createTextEditorDecorationType({
         after: {
             margin: '0 0 0 1em',
-            contentText: 'Latest: ',
+            contentText: '=> ',
             color: '#888888',
             fontStyle: 'italic'
         }
@@ -87,7 +87,7 @@ async function addLatestVersionDecorations(document: vscode.TextDocument) {
                     range,
                     renderOptions: {
                         after: {
-                            contentText: `Latest: ${latestVersion}`,
+                            contentText: `=> ${latestVersion}`,
                         }
                     }
                 });
@@ -149,11 +149,14 @@ async function updatePackage() {
             ? `${packageName}${versionSpecifier.split(/\d/)[0]}${latestVersion}`
             : `${packageName}==${latestVersion}`;
         
-        editor.edit(editBuilder => {
+        await editor.edit(editBuilder => {
             editBuilder.replace(line.range, newText);
         });
 
-        vscode.window.showInformationMessage(`Updated ${packageName} to version ${latestVersion}.`);
+        // Save the document after making changes
+        await document.save();
+
+        vscode.window.showInformationMessage(`Updated ${packageName} to version ${latestVersion} and saved the file.`);
     } catch (error) {
         vscode.window.showErrorMessage(`Failed to fetch the latest version for ${packageName}.`);
     }
@@ -195,7 +198,7 @@ async function updateAllPackages() {
         }
     }
 
-    editor.edit(editBuilder => {
+    await editor.edit(editBuilder => {
         const fullRange = new vscode.Range(
             document.positionAt(0),
             document.positionAt(document.getText().length)
@@ -203,7 +206,10 @@ async function updateAllPackages() {
         editBuilder.replace(fullRange, updatedLines.join('\n'));
     });
 
-    vscode.window.showInformationMessage('Updated all packages to their latest versions.');
+    // Save the document after making changes
+    await document.save();
+
+    vscode.window.showInformationMessage('Updated all packages to their latest versions and saved the file.');
 }
 
 async function updateAndInstallPackage() {
