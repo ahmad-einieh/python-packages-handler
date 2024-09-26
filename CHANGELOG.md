@@ -4,9 +4,14 @@ All notable changes to the "python-packages-handler" extension will be documente
 
 ## Release Notes
 
+### 0.0.6
+- Added feature to install packages without updating their versions
+- Improved performance with parallel processing for updating packages
+- Updated dependencies to latest compatible versions
+
 ### 0.0.5
-- Save requirements.txt file after change versions
-- Edited on readme file
+- Save requirements.txt file after changing versions
+- Edited readme file
 
 ### 0.0.4
 - Added feature to show latest available version for each package after the package line

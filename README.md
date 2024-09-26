@@ -8,6 +8,7 @@ Python Packages Handler is a Visual Studio Code extension that helps you manage,
 - Update all Python packages in a `requirements.txt` file to their latest versions
 - Update and install a single Python package
 - Update and install all Python packages in a `requirements.txt` file
+- Install packages without updating their versions
 - Preserves existing version specifiers (e.g., `~=`, `>=`, `==`, etc.)
 - Accessible via right-click context menu in `requirements.txt` files
 - Shows the latest available version for each package after the package line
@@ -55,6 +56,12 @@ Here's a quick demonstration of how to use the Python Packages Handler extension
 1. Open a `requirements.txt` file in VS Code
 2. Right-click anywhere in the file
 3. Select "Update and Install All Python Packages" from the context menu
+
+### Installing Packages Without Updating
+
+1. Open a `requirements.txt` file in VS Code
+2. Right-click anywhere in the file
+3. Select "Install Python Packages Without Updating" from the context menu
 
 ## Requirements
 

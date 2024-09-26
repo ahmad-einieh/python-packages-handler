@@ -3,7 +3,7 @@
   "displayName": "Python Packages Handler",
   "publisher": "Ahmad-Einieh",
   "description": "Easily update and install Python package versions in requirements.txt files",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "icon": "assets/icon.jpeg",
   "engines": {
     "vscode": "^1.60.0"
@@ -36,6 +36,10 @@
       {
         "command": "python-packages-handler.updateAllAndInstallPackages",
         "title": "Update and Install All Python Packages"
+      },
+      {
+        "command": "python-packages-handler.installPackagesWithoutUpdate",
+        "title": "Install Python Packages"
       }
     ],
     "menus": {
@@ -59,6 +63,11 @@
           "when": "resourceLangId == pip-requirements",
           "command": "python-packages-handler.updateAllAndInstallPackages",
           "group": "1_modification"
+        },
+        {
+          "when": "resourceLangId == pip-requirements",
+          "command": "python-packages-handler.installPackagesWithoutUpdate",
+          "group": "1_modification"
         }
       ]
     }
@@ -80,6 +89,7 @@
   "devDependencies": {
     "@types/mocha": "^10.0.7",
     "@types/node": "20.x",
+    "@types/node-fetch": "^2.6.11",
     "@types/vscode": "^1.60.0",
     "@typescript-eslint/eslint-plugin": "^7.14.1",
     "@typescript-eslint/parser": "^7.11.0",
@@ -91,6 +101,8 @@
     "typescript": "^5.4.5"
   },
   "dependencies": {
+    "node-fetch": "^2.7.0",
+    "p-limit": "^3.1.0",
     "python-packages-handler": "file:"
   }
 }
