@@ -3,7 +3,7 @@
   "displayName": "Python Packages Handler",
   "publisher": "Ahmad-Einieh",
   "description": "Easily update and install Python package versions in requirements.txt files",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "icon": "assets/icon.jpeg",
   "engines": {
     "vscode": "^1.60.0"
@@ -23,54 +23,89 @@
     "commands": [
       {
         "command": "python-packages-handler.updatePackageVersion",
-        "title": "Update Python Package Version"
+        "title": "Update Python Package Version",
+        "category": "Python Packages"
       },
       {
         "command": "python-packages-handler.updateAllPackages",
-        "title": "Update All Python Packages"
+        "title": "Update All Python Packages",
+        "category": "Python Packages"
       },
       {
         "command": "python-packages-handler.updateAndInstallPackage",
-        "title": "Update and Install Python Package"
+        "title": "Update and Install Python Package",
+        "category": "Python Packages"
       },
       {
         "command": "python-packages-handler.updateAllAndInstallPackages",
-        "title": "Update and Install All Python Packages"
+        "title": "Update and Install All Python Packages",
+        "category": "Python Packages"
       },
       {
         "command": "python-packages-handler.installPackagesWithoutUpdate",
-        "title": "Install Python Packages"
+        "title": "Install Python Packages",
+        "category": "Python Packages"
       }
     ],
     "menus": {
       "editor/context": [
         {
-          "when": "resourceLangId == pip-requirements",
+          "submenu": "python-packages-handler.packageMenu",
+          "when": "resourceLangId == pip-requirements"
+        }
+      ],
+      "python-packages-handler.packageMenu": [
+        {
+          "group": "update",
+          "command": "python-packages-handler.updatePackageVersion"
+        },
+        {
+          "group": "update",
+          "command": "python-packages-handler.updateAllPackages"
+        },
+        {
+          "group": "install",
+          "command": "python-packages-handler.updateAndInstallPackage"
+        },
+        {
+          "group": "install",
+          "command": "python-packages-handler.updateAllAndInstallPackages"
+        },
+        {
+          "group": "install",
+          "command": "python-packages-handler.installPackagesWithoutUpdate"
+        }
+      ],
+      "commandPalette": [
+        {
           "command": "python-packages-handler.updatePackageVersion",
-          "group": "1_modification"
+          "when": "resourceLangId == pip-requirements"
         },
         {
-          "when": "resourceLangId == pip-requirements",
           "command": "python-packages-handler.updateAllPackages",
-          "group": "1_modification"
+          "when": "resourceLangId == pip-requirements"
         },
         {
-          "when": "resourceLangId == pip-requirements",
           "command": "python-packages-handler.updateAndInstallPackage",
-          "group": "1_modification"
+          "when": "resourceLangId == pip-requirements"
         },
         {
-          "when": "resourceLangId == pip-requirements",
           "command": "python-packages-handler.updateAllAndInstallPackages",
-          "group": "1_modification"
+          "when": "resourceLangId == pip-requirements"
         },
         {
-          "when": "resourceLangId == pip-requirements",
           "command": "python-packages-handler.installPackagesWithoutUpdate",
-          "group": "1_modification"
+          "when": "resourceLangId == pip-requirements"
         }
       ]
-    }
+    },
+    "submenus": [
+      {
+        "id": "python-packages-handler.packageMenu",
+        "label": "Python Packages",
+        "icon": "$(package)"
+      }
+    ]
   },
   "scripts": {
     "vscode:prepublish": "npm run package",

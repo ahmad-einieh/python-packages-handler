@@ -10,8 +10,8 @@ Python Packages Handler is a Visual Studio Code extension that helps you manage,
 - Update and install all Python packages in a `requirements.txt` file
 - Install packages without updating their versions
 - Preserves existing version specifiers (e.g., `~=`, `>=`, `==`, etc.)
-- Accessible via right-click context menu in `requirements.txt` files
 - Shows the latest available version for each package after the package line
+- All commands available in a dedicated submenu for better organization
 
 ## Installation
 
@@ -33,35 +33,21 @@ Here's a quick demonstration of how to use the Python Packages Handler extension
 1. Open a `requirements.txt` file in VS Code
 2. The latest available version for each package will be displayed after the package line
 
-### Updating a Single Package
-
-1. Open a `requirements.txt` file in VS Code
-2. Right-click on the line containing the package you want to update
-3. Select "Update Python Package Version" from the context menu
-
-### Updating All Packages
+### Using the Python Packages Menu
 
 1. Open a `requirements.txt` file in VS Code
 2. Right-click anywhere in the file
-3. Select "Update All Python Packages" from the context menu
+3. Navigate to the "Python Packages" submenu
+4. Choose from the following options:
 
-### Updating and Installing a Single Package
+Update Options:
+- Update Python Package Version
+- Update All Python Packages
 
-1. Open a `requirements.txt` file in VS Code
-2. Right-click on the line containing the package you want to update and install
-3. Select "Update and Install Python Package" from the context menu
-
-### Updating and Installing All Packages
-
-1. Open a `requirements.txt` file in VS Code
-2. Right-click anywhere in the file
-3. Select "Update and Install All Python Packages" from the context menu
-
-### Installing Packages Without Updating
-
-1. Open a `requirements.txt` file in VS Code
-2. Right-click anywhere in the file
-3. Select "Install Python Packages Without Updating" from the context menu
+Install Options:
+- Update and Install Python Package
+- Update and Install All Python Packages
+- Install Python Packages Without Updating
 
 ## Requirements
 
@@ -83,4 +69,7 @@ This extension is licensed under the [MIT License](LICENSE.md).
 
 ## Author
 
-Created and maintained by Ahmad Einieh [GitHub](https://github.com/ahmad-einieh), [Website](https://ahmadeinieh.online/), [LinkedIn](https://www.linkedin.com/in/ahmad-einieh/).
+Created and maintained by Ahmad Einieh:
+- [GitHub](https://github.com/ahmad-einieh)
+- [Website](https://ahmadeinieh.online/)
+- [LinkedIn](https://www.linkedin.com/in/ahmad-einieh/)
