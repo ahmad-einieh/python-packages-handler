@@ -4,7 +4,15 @@ All notable changes to the "python-packages-handler" extension will be documente
 
 ## Release Notes
 
-### 0.0.7 (Current)
+### 0.1.0 (Current)
+- Added support for `pyproject.toml` files (PEP 621 `dependencies` and `optional-dependencies`, PEP 735 `dependency-groups`, and Poetry `tool.poetry.dependencies` / `tool.poetry.group.*.dependencies` / `tool.poetry.dev-dependencies`)
+- Latest available versions are now shown inline for dependencies in `pyproject.toml`
+- Install commands run `pip install .` for the project when editing `pyproject.toml`
+- Migrated ESLint to the flat config format (`eslint.config.mjs`)
+- Updated dependencies and devDependencies to the latest compatible versions
+- Removed the stray self-referencing dependency from `package.json`
+
+### 0.0.7
 - Reorganized commands into a dedicated "Python Packages" submenu
 - Improved UI organization and accessibility
 - Updated dependencies to latest versions

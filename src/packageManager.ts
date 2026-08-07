@@ -1,138 +1,81 @@
 import * as vscode from 'vscode';
-import pLimit from 'p-limit';
-import { fetchLatestVersion, findRequirementsFile, createTerminal } from './utils';
-import { decorationType, getDecorationOptions } from './decoration';
-
-const concurrencyLimit = 5;
-const limit = pLimit(concurrencyLimit);
+import { detectFileType, ProjectFileType, createTerminal } from './utils';
+import { decorateRequirements, updateRequirementsPackage, updateAllRequirementsPackages } from './requirementsManager';
+import { decoratePyproject, updatePyprojectPackage, updateAllPyprojectPackages } from './pyprojectManager';
 
 export async function addLatestVersionDecorationsParallel(document: vscode.TextDocument) {
-    const editor = vscode.window.visibleTextEditors.find(editor => editor.document === document);
+    const editor = vscode.window.visibleTextEditors.find(e => e.document === document);
     if (!editor) {
         return;
     }
 
-    const text = document.getText();
-    const lines = text.split('\n');
-
-    const decorationPromises = lines.map((line, i) => limit(async () => {
-        const packageMatch = line.trim().match(/^([\w-]+)((?:[=<>!~]+.*)?)$/);
-        if (packageMatch) {
-            const packageName = packageMatch[1];
-            const latestVersion = await fetchLatestVersion(packageName);
-            if (latestVersion) {
-                const range = new vscode.Range(i, line.length, i, line.length);
-                return getDecorationOptions(range, latestVersion);
-            }
-        }
-        return null;
-    }));
-
-    const decorations = (await Promise.all(decorationPromises)).filter(d => d !== null);
-    editor.setDecorations(decorationType, decorations);
+    switch (detectFileType(document)) {
+        case ProjectFileType.Requirements:
+            await decorateRequirements(document, editor);
+            break;
+        case ProjectFileType.Pyproject:
+            await decoratePyproject(document, editor);
+            break;
+        default:
+            break;
+    }
 }
 
-
-export async function updatePackage() {
+function getEditorForCommand(): vscode.TextEditor | undefined {
     const editor = vscode.window.activeTextEditor;
-    if (!editor || editor.document.languageId !== 'pip-requirements') {
-        vscode.window.showErrorMessage('This command only works in requirements.txt files.');
-        return;
+    if (!editor || detectFileType(editor.document) === ProjectFileType.Unknown) {
+        vscode.window.showErrorMessage('Open a requirements.txt or pyproject.toml file first.');
+        return undefined;
     }
-
-    const position = editor.selection.active;
-    const line = editor.document.lineAt(position.line);
-    const lineText = line.text.trim();
-
-    const packageMatch = lineText.match(/^([\w-]+)((?:[=<>!~]+.*)?)$/);
-    if (!packageMatch) {
-        vscode.window.showErrorMessage('Invalid package specification.');
-        return;
-    }
-
-    const packageName = packageMatch[1];
-    const versionSpecifier = packageMatch[2] || '==';
-
-    try {
-        const latestVersion = await fetchLatestVersion(packageName);
-        if (!latestVersion) {
-            throw new Error('Failed to fetch latest version');
-        }
-
-        const newText = versionSpecifier 
-            ? `${packageName}${versionSpecifier.split(/\d/)[0]}${latestVersion}`
-            : `${packageName}==${latestVersion}`;
-        
-        await editor.edit(editBuilder => {
-            editBuilder.replace(line.range, newText);
-        });
-
-        await editor.document.save();
-        vscode.window.showInformationMessage(`Updated ${packageName} to version ${latestVersion}`);
-        
-        return packageName;
-    } catch (error) {
-        vscode.window.showErrorMessage(`Failed to update ${packageName}`);
-        return null;
-    }
+    return editor;
 }
 
+export async function updatePackage(): Promise<string | null> {
+    const editor = getEditorForCommand();
+    if (!editor) {
+        return null;
+    }
+
+    if (detectFileType(editor.document) === ProjectFileType.Pyproject) {
+        return updatePyprojectPackage(editor);
+    }
+    return updateRequirementsPackage(editor);
+}
 
 export async function updateAllPackages() {
-    const editor = vscode.window.activeTextEditor;
-    if (!editor || editor.document.languageId !== 'pip-requirements') {
-        vscode.window.showErrorMessage('This command only works in requirements.txt files.');
+    const editor = getEditorForCommand();
+    if (!editor) {
         return;
     }
 
-    const document = editor.document;
-    const text = document.getText();
-    const lines = text.split('\n');
-
-    const updatedLinesPromises = lines.map(line => limit(async () => {
-        const packageMatch = line.trim().match(/^([\w-]+)((?:[=<>!~]+.*)?)$/);
-        if (packageMatch) {
-            const packageName = packageMatch[1];
-            const versionSpecifier = packageMatch[2] || '==';
-            try {
-                const latestVersion = await fetchLatestVersion(packageName);
-                if (latestVersion) {
-                    return versionSpecifier 
-                        ? `${packageName}${versionSpecifier.split(/\d/)[0]}${latestVersion}`
-                        : `${packageName}==${latestVersion}`;
-                }
-            } catch (error) {
-                // Keep original if update fails
-            }
-        }
-        return line;
-    }));
-
-    const updatedLines = await Promise.all(updatedLinesPromises);
-
-    await editor.edit(editBuilder => {
-        const fullRange = new vscode.Range(
-            document.positionAt(0),
-            document.positionAt(document.getText().length)
-        );
-        editBuilder.replace(fullRange, updatedLines.join('\n'));
-    });
-
-    await document.save();
-    vscode.window.showInformationMessage('Updated all packages to their latest versions');
+    if (detectFileType(editor.document) === ProjectFileType.Pyproject) {
+        await updateAllPyprojectPackages(editor);
+    } else {
+        await updateAllRequirementsPackages(editor);
+    }
 }
 
-
 export async function installPackages(specificPackage?: string) {
-    const requirementsPath = await findRequirementsFile();
-    if (!requirementsPath) {
-        vscode.window.showErrorMessage('Could not find requirements.txt file');
+    const editor = vscode.window.activeTextEditor;
+    const fileType = editor ? detectFileType(editor.document) : ProjectFileType.Unknown;
+    if (fileType === ProjectFileType.Unknown) {
+        vscode.window.showErrorMessage('Open a requirements.txt or pyproject.toml file first.');
         return;
     }
 
     const terminal = createTerminal();
     terminal.show();
 
+    if (fileType === ProjectFileType.Pyproject) {
+        const folder = vscode.workspace.getWorkspaceFolder(editor!.document.uri);
+        const cwd = folder ? folder.uri.fsPath : vscode.workspace.rootPath;
+        const target = cwd ? `"${cwd}"` : '.';
+        terminal.sendText(`pip install ${target} --upgrade`);
+        vscode.window.showInformationMessage('Installing project dependencies...');
+        return;
+    }
+
+    const requirementsPath = editor!.document.uri.fsPath;
     if (specificPackage) {
         terminal.sendText(`pip install --upgrade ${specificPackage}`);
         vscode.window.showInformationMessage(`Installing ${specificPackage}...`);
@@ -141,7 +84,6 @@ export async function installPackages(specificPackage?: string) {
         vscode.window.showInformationMessage('Installing packages...');
     }
 }
-
 
 export async function updateAndInstallPackage() {
     const packageName = await updatePackage();
@@ -156,14 +98,26 @@ export async function updateAllAndInstallPackages() {
 }
 
 export async function installPackagesWithoutUpdate() {
-    const requirementsPath = await findRequirementsFile();
-    if (!requirementsPath) {
-        vscode.window.showErrorMessage('Could not find requirements.txt file');
+    const editor = vscode.window.activeTextEditor;
+    const fileType = editor ? detectFileType(editor.document) : ProjectFileType.Unknown;
+    if (fileType === ProjectFileType.Unknown) {
+        vscode.window.showErrorMessage('Open a requirements.txt or pyproject.toml file first.');
         return;
     }
 
     const terminal = createTerminal();
     terminal.show();
+
+    if (fileType === ProjectFileType.Pyproject) {
+        const folder = vscode.workspace.getWorkspaceFolder(editor!.document.uri);
+        const cwd = folder ? folder.uri.fsPath : vscode.workspace.rootPath;
+        const target = cwd ? `"${cwd}"` : '.';
+        terminal.sendText(`pip install ${target}`);
+        vscode.window.showInformationMessage('Installing project dependencies...');
+        return;
+    }
+
+    const requirementsPath = editor!.document.uri.fsPath;
     terminal.sendText(`pip install -r "${requirementsPath}"`);
     vscode.window.showInformationMessage('Installing packages...');
 }

@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import { registerCommands } from './commands';
 import { decorationType, initializeDecoration } from './decoration';
 import { addLatestVersionDecorationsParallel } from './packageManager';
+import { isHandledFile } from './utils';
 
 export function activate(context: vscode.ExtensionContext) {
     console.log('Python Packages Handler is now active!');
@@ -11,17 +12,17 @@ export function activate(context: vscode.ExtensionContext) {
 
     context.subscriptions.push(
         vscode.workspace.onDidOpenTextDocument(async (document) => {
-            if (document.languageId === 'pip-requirements') {
+            if (isHandledFile(document)) {
                 await addLatestVersionDecorationsParallel(document);
             }
         }),
         vscode.workspace.onDidChangeTextDocument(async (event) => {
-            if (event.document.languageId === 'pip-requirements') {
+            if (isHandledFile(event.document)) {
                 await addLatestVersionDecorationsParallel(event.document);
             }
         }),
         vscode.window.onDidChangeActiveTextEditor(async (editor) => {
-            if (editor && editor.document.languageId === 'pip-requirements') {
+            if (editor && isHandledFile(editor.document)) {
                 await addLatestVersionDecorationsParallel(editor.document);
             }
         })

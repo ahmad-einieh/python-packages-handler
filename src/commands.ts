@@ -32,7 +32,7 @@ export function registerCommands(context: vscode.ExtensionContext) {
     ];
 
     commands.forEach(({ command, callback }) => {
-        let disposable = vscode.commands.registerCommand(command, callback);
+        const disposable = vscode.commands.registerCommand(command, callback);
         context.subscriptions.push(disposable);
     });
 }

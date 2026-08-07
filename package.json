@@ -2,8 +2,8 @@
   "name": "python-packages-handler",
   "displayName": "Python Packages Handler",
   "publisher": "Ahmad-Einieh",
-  "description": "Easily update and install Python package versions in requirements.txt files",
-  "version": "0.0.7",
+  "description": "Easily update and install Python package versions in requirements.txt and pyproject.toml files",
+  "version": "0.1.0",
   "icon": "assets/icon.jpeg",
   "engines": {
     "vscode": "^1.60.0"
@@ -16,7 +16,8 @@
     "Other"
   ],
   "activationEvents": [
-    "onLanguage:pip-requirements"
+    "onLanguage:pip-requirements",
+    "workspaceContains:pyproject.toml"
   ],
   "main": "./dist/extension.js",
   "contributes": {
@@ -51,7 +52,7 @@
       "editor/context": [
         {
           "submenu": "python-packages-handler.packageMenu",
-          "when": "resourceLangId == pip-requirements"
+          "when": "resourceLangId == pip-requirements || resourceFilename == pyproject.toml"
         }
       ],
       "python-packages-handler.packageMenu": [
@@ -79,23 +80,23 @@
       "commandPalette": [
         {
           "command": "python-packages-handler.updatePackageVersion",
-          "when": "resourceLangId == pip-requirements"
+          "when": "resourceLangId == pip-requirements || resourceFilename == pyproject.toml"
         },
         {
           "command": "python-packages-handler.updateAllPackages",
-          "when": "resourceLangId == pip-requirements"
+          "when": "resourceLangId == pip-requirements || resourceFilename == pyproject.toml"
         },
         {
           "command": "python-packages-handler.updateAndInstallPackage",
-          "when": "resourceLangId == pip-requirements"
+          "when": "resourceLangId == pip-requirements || resourceFilename == pyproject.toml"
         },
         {
           "command": "python-packages-handler.updateAllAndInstallPackages",
-          "when": "resourceLangId == pip-requirements"
+          "when": "resourceLangId == pip-requirements || resourceFilename == pyproject.toml"
         },
         {
           "command": "python-packages-handler.installPackagesWithoutUpdate",
-          "when": "resourceLangId == pip-requirements"
+          "when": "resourceLangId == pip-requirements || resourceFilename == pyproject.toml"
         }
       ]
     },
@@ -118,26 +119,27 @@
     "watch-tests": "tsc -p . -w --outDir out",
     "pretest": "npm run compile-tests && npm run compile && npm run lint",
     "check-types": "tsc --noEmit",
-    "lint": "eslint src --ext ts",
+    "lint": "eslint src",
     "test": "vscode-test"
   },
   "devDependencies": {
-    "@types/mocha": "^10.0.7",
-    "@types/node": "20.x",
-    "@types/node-fetch": "^2.6.11",
+    "@eslint/js": "^9.0.0",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "^22.0.0",
+    "@types/node-fetch": "^2.6.13",
     "@types/vscode": "^1.60.0",
-    "@typescript-eslint/eslint-plugin": "^7.14.1",
-    "@typescript-eslint/parser": "^7.11.0",
-    "@vscode/test-cli": "^0.0.9",
-    "@vscode/test-electron": "^2.4.0",
-    "esbuild": "^0.21.5",
-    "eslint": "^8.57.0",
+    "@typescript-eslint/eslint-plugin": "^8.0.0",
+    "@typescript-eslint/parser": "^8.0.0",
+    "@vscode/test-cli": "^0.0.15",
+    "@vscode/test-electron": "^3.1.0",
+    "esbuild": "^0.28.0",
+    "eslint": "^9.0.0",
     "npm-run-all": "^4.1.5",
-    "typescript": "^5.4.5"
+    "typescript": "^5.6.0",
+    "typescript-eslint": "^8.0.0"
   },
   "dependencies": {
     "node-fetch": "^2.7.0",
-    "p-limit": "^3.1.0",
-    "python-packages-handler": "file:"
+    "p-limit": "^3.1.0"
   }
 }

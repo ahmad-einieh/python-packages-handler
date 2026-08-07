@@ -1,17 +1,21 @@
 # Python Packages Handler
 
-Python Packages Handler is a Visual Studio Code extension that helps you manage, update, and install Python package versions in your `requirements.txt` files.
+Python Packages Handler is a Visual Studio Code extension that helps you manage, update, and install Python package versions in your `requirements.txt` and `pyproject.toml` files.
 
 ## Features
 
 - Update a single Python package to its latest version
-- Update all Python packages in a `requirements.txt` file to their latest versions
+- Update all Python packages in a `requirements.txt` or `pyproject.toml` file to their latest versions
 - Update and install a single Python package
-- Update and install all Python packages in a `requirements.txt` file
+- Update and install all Python packages in a `requirements.txt` or `pyproject.toml` file
 - Install packages without updating their versions
-- Preserves existing version specifiers (e.g., `~=`, `>=`, `==`, etc.)
+- Preserves existing version specifiers (e.g., `~=`, `>=`, `==`, `^`, etc.)
 - Shows the latest available version for each package after the package line
 - All commands available in a dedicated submenu for better organization
+- `pyproject.toml` support covers:
+  - PEP 621 `[project] dependencies` and `[project.optional-dependencies]` (including `dev`)
+  - PEP 735 `[dependency-groups]`
+  - Poetry `[tool.poetry.dependencies]`, `[tool.poetry.group.*.dependencies]`, and `[tool.poetry.dev-dependencies]`
 
 ## Installation
 
@@ -30,12 +34,12 @@ Here's a quick demonstration of how to use the Python Packages Handler extension
 
 ### Viewing Latest Available Versions
 
-1. Open a `requirements.txt` file in VS Code
+1. Open a `requirements.txt` or `pyproject.toml` file in VS Code
 2. The latest available version for each package will be displayed after the package line
 
 ### Using the Python Packages Menu
 
-1. Open a `requirements.txt` file in VS Code
+1. Open a `requirements.txt` or `pyproject.toml` file in VS Code
 2. Right-click anywhere in the file
 3. Navigate to the "Python Packages" submenu
 4. Choose from the following options:
@@ -48,6 +52,8 @@ Install Options:
 - Update and Install Python Package
 - Update and Install All Python Packages
 - Install Python Packages Without Updating
+
+> Note: For `pyproject.toml`, the install commands run `pip install .` (or `pip install . --upgrade`) for the project, which resolves and installs the dependencies declared in the file.
 
 ## Requirements
 
