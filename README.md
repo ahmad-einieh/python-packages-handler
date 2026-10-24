@@ -67,6 +67,12 @@ This extension doesn't add any VS Code settings.
 
 ## Contributing
 
+### Local extension development
+
+Use Node.js/npm matching `package.json`, run `npm ci`, then `npm run compile`. Open this repository in VS Code and use the extension-development launch configuration to exercise commands. `npm test` uses the configured VS Code test runner; `npm run package` produces the production JavaScript build, not automatically a published marketplace release. These commands were not executed for this documentation refresh.
+
+Package-version updates can introduce breaking changes even when a version-specifier operator is preserved. Review diffs and test the target Python project, use its intended virtual environment, and remember that installing a local `pyproject.toml` project can execute build hooks. Do not apply install commands to untrusted projects or commit private package-index credentials.
+
 Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## License
